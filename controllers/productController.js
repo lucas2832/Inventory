@@ -10,7 +10,7 @@ exports.createProduct = async (req, res) => {
 }
 
 exports.getAllProducts = async (req, res) => {
-    const products = await productService.getAll();
+    const products = await productService.getAll(req.query.term);
     res.json(products);
 }
 
