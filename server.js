@@ -1,21 +1,24 @@
-const express = require('express');
-const mongoose = require('mongoose');
+import express, { json } from 'express';
+import mongoose from 'mongoose';
 
-const productRoutes = require("./routes/productRoutes");
+import productRoutes from "./routes/productRoutes.js";
+
+const PORT = 3000;
 
 const app = express();
-app.use(express.json());
+app.use(json());
 
 mongoose.connect('mongodb://localhost:27017/inventory');
 
-mongoose.connection.once('open', () => {
+const connection = mongoose.connection;
+connection.once('open', () => {
   console.log('MongoDB connected');
 });
 
 app.use("/products", productRoutes);
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
 
-module.exports = app;
+export default app;

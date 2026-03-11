@@ -1,11 +1,11 @@
-const Product = require('../models/Product');
-const client = require('../elasticsearch');
+import Product from '../models/Product.js';
+import {update as _update, search, index as _index, remove as _remove} from '../elasticsearch.js';
 
-exports.create = async (data) => {
+const create = async (data) => {
     const product = new Product(data);
-        await product.save();
+    await product.save();
 
-    await client.update({
+    await _index({
         index: 'products',
         id: product._id.toString(),
         document: {
@@ -18,9 +18,9 @@ exports.create = async (data) => {
     return product;
 }
 
-exports.getAll = async (term) => {
+const getAll = async (term) => {
     if (term) {
-        const result = await client.search({
+        const result = await search({
             index: 'products',
             query: {
                 match_phrase_prefix: {
@@ -32,18 +32,18 @@ exports.getAll = async (term) => {
         const hits = result.hits.hits;
         return hits.map(hit => ({ _id: hit._id, ...hit._source }));
     }
-    return await Product.find();
+    return Product.find();
 }
 
-exports.getById = async (id) => {
-    return await Product.findById(id);
+const getById = async (id) => {
+    return Product.findById(id);
 }
 
-exports.update = async (id, data) => {
+const update = async (id, data) => {
     const product = await Product.findByIdAndUpdate(id, data, { new: true });
 
     if (product) {
-        await client.index({
+        await _index({
             index: 'products',
             id: product._id.toString(),
             document: { name: product.name, qty: product.qty, price: product.price }
@@ -52,13 +52,13 @@ exports.update = async (id, data) => {
     return product;
 }
 
-exports.remove = async (id) => {
+const remove = async (id) => {
     const product = await Product.findByIdAndDelete(id);
 
     if (product) {
-        await client.delete({ index: 'products', id: id });
+        await _remove({ index: 'products', id: id });
     }
     return product;
 }
 
-module.exports = exports;
+export { create, getAll, getById, update, remove };

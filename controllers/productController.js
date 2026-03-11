@@ -1,32 +1,32 @@
-const productService = require('../services/productServices');
+import { create, getAll, getById, update, remove } from '../services/productServices.js';
 
-exports.createProduct = async (req, res) => {
+const createProduct = async (req, res) => {
     try {
-        const product = await productService.create(req.body);
+        const product = await create(req.body);
         res.json(product);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 }
 
-exports.getAllProducts = async (req, res) => {
-    const products = await productService.getAll(req.query.term);
+const getAllProducts = async (req, res) => {
+    const products = await getAll(req.query.term);
     res.json(products);
 }
 
-exports.getProductById = async (req, res) => {
-    const product = await productService.getById(req.params.id);
+const getProductById = async (req, res) => {
+    const product = await getById(req.params.id);
     res.json(product);
 }
 
-exports.updateProduct = async (req, res) => {
-    const product = await productService.update(req.params.id, req.body);
+const updateProduct = async (req, res) => {
+    const product = await update(req.params.id, req.body);
     res.json(product);
 }
 
-exports.deleteProduct = async (req, res) => {
-    const product = await productService.remove(req.params.id);
+const deleteProduct = async (req, res) => {
+    const product = await remove(req.params.id);
     res.json(product);
 }
 
-module.exports = exports;
+export default { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct };
