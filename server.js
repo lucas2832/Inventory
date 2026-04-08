@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express, { json } from 'express';
 import mongoose from 'mongoose';
 
@@ -8,7 +9,7 @@ const PORT = 3000;
 const app = express();
 app.use(json());
 
-mongoose.connect('mongodb://localhost:27017/inventory');
+mongoose.connect(process.env.DB_CONNECTION_STRING);
 
 const connection = mongoose.connection;
 connection.once('open', () => {
