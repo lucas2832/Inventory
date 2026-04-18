@@ -1,5 +1,5 @@
 import Product from '../models/Product.js';
-import {update as _update, search, index as _index, remove as _remove} from '../elasticsearch.js';
+import {update as _update, search, index as _index, remove as _remove} from '../../elasticsearch.js';
 
 const create = async (data) => {
     const product = new Product(data);

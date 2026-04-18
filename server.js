@@ -1,20 +1,15 @@
 import "dotenv/config";
 import express, { json } from 'express';
-import mongoose from 'mongoose';
+import productRoutes from "./src/routes/productRoutes.js";
 
-import productRoutes from "./routes/productRoutes.js";
+import connectDB from "./src/config/dbConnect.js";
 
 const PORT = 3000;
 
 const app = express();
 app.use(json());
 
-mongoose.connect(process.env.DB_CONNECTION_STRING);
-
-const connection = mongoose.connection;
-connection.once('open', () => {
-  console.log('MongoDB connected');
-});
+connectDB();
 
 app.use("/products", productRoutes);
 

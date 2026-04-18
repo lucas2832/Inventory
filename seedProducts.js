@@ -1,7 +1,8 @@
-const mongoose = require('mongoose');
-const client = require('./elasticsearch');
+import mongoose from 'mongoose';
+import client from './elasticsearch.js';
+import connectDB from "./src/config/dbConnect.js";
 
-mongoose.connect('mongodb://localhost:27017/inventory',);
+connectDB();
 
 const ProductSchema = new mongoose.Schema({
     name: String,
