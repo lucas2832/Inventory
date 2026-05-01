@@ -1,64 +1,25 @@
-import Product from '../models/Product.js';
-import {update as _update, search, index as _index, remove as _remove} from '../../elasticsearch.js';
+import InventoryRepository from '../repositories/InventoryRepository.js'
+
+const inventoryRepository = new InventoryRepository();
 
 const create = async (data) => {
-    const product = new Product(data);
-    await product.save();
-
-    await _index({
-        index: 'products',
-        id: product._id.toString(),
-        document: {
-            name: product.name,
-            qty: product.qty,
-            price: product.price
-        }
-    });
-
-    return product;
+    return await inventoryRepository.create(data);
 }
 
 const getAll = async (term) => {
-    if (term) {
-        const result = await search({
-            index: 'products',
-            query: {
-                match_phrase_prefix: {
-                    name: term
-                }
-            }
-        });
-
-        const hits = result.hits.hits;
-        return hits.map(hit => ({ _id: hit._id, ...hit._source }));
-    }
-    return Product.find();
+    return await inventoryRepository.findAll(term);
 }
 
 const getById = async (id) => {
-    return Product.findById(id);
+    return await inventoryRepository.findById(id);
 }
 
 const update = async (id, data) => {
-    const product = await Product.findByIdAndUpdate(id, data, { new: true });
-
-    if (product) {
-        await _index({
-            index: 'products',
-            id: product._id.toString(),
-            document: { name: product.name, qty: product.qty, price: product.price }
-        });
-    }
-    return product;
+    return await inventoryRepository.update(id, data);
 }
 
 const remove = async (id) => {
-    const product = await Product.findByIdAndDelete(id);
-
-    if (product) {
-        await _remove({ index: 'products', id: id });
-    }
-    return product;
+    return await inventoryRepository.delete(id);
 }
 
 export { create, getAll, getById, update, remove };
